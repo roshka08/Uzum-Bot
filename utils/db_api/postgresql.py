@@ -62,6 +62,17 @@ class Database:
         """
         await self.execute(sql, execute=True)
 
+    async def create_table_cart(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS Cart (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        amount INTEGER NOT NULL
+        );
+        """
+        await self.execute(sql, execute=True)
+
     async def create_table_products(self):
         sql = """
         CREATE TABLE IF NOT EXISTS Product (
@@ -86,6 +97,19 @@ class Database:
         sql = "INSERT INTO users (full_name, username, telegram_id) VALUES($1, $2, $3) returning *"
         return await self.execute(sql, full_name, username, telegram_id, fetchrow=True)
 
+    async def add_product_to_cart(self, user_id, product_id, amount):
+        sql = "INSERT INTO Cart (user_id, product_id, amount) VALUES($1, $2, $3) returning *"
+        return await self.execute(sql,user_id, product_id, amount, fetchrow=True)
+    
+    async def update_product_to_cart(self, user_id, product_id, amount):
+        sql = "UPDATE Cart SET user_id=$1 WHERE product_id=$2 AND amount=$3"
+        return await self.execute(sql, user_id, product_id, amount, execute=True)
+                                  
+    async def select_cart_product(self, **kwargs):
+        sql = "SELECT * FROM Cart WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetchrow=True)
+    
     async def select_all_users(self):
         sql = "SELECT * FROM Users"
         return await self.execute(sql, fetch=True)
@@ -106,8 +130,13 @@ class Database:
     async def select_product_by_category(self, **kwargs):
         sql = "SELECT * FROM Product WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
-        return await self.execute(sql, *parameters, fetchrow=True)
+        return await self.execute(sql, *parameters, fetch=True)
 
+    async def select_product(self, **kwargs):
+        sql = "SELECT * FROM Product WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetchrow=True)
+    
     async def select_user(self, **kwargs):
         sql = "SELECT * FROM Users WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
