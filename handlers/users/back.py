@@ -6,6 +6,7 @@ from aiogram.dispatcher import FSMContext
 
 @dp.message_handler(text="🏠 Bosh menyu", state="*")
 @dp.message_handler(text="⬅️ Orqaga", state=ShopState.category)
+@dp.message_handler(text="⬅️ Orqaga", state=ShopState.cart)
 async def main_menu_redirect(message: types.Message, state: FSMContext):
     await message.answer("Siz bosh menyuga qaytingiz. Kerakli bo'limni tanlang!", reply_markup=main_markup)
     await state.finish()
@@ -24,3 +25,11 @@ async def product_menu_redirect(message: types.Message, state: FSMContext):
     markup = await get_product_markup(products=products)
     await message.answer(f"Ushbu bo'limidan kerakli mahsulotni tanlang", reply_markup=markup)
     await ShopState.product.set()
+
+@dp.message_handler(text="🔄 Tozalash", state=ShopState.cart)
+async def delete_all_cart_items(message: types.Message):
+    user = await db.select_user(telegram_id=message.from_user.id)
+    await db.clear_cart_item(user_id=user["id"])
+    markup = await get_category_markup()
+    await message.answer("Sizning savatingiz tozalandi!", reply_markup=markup)
+    await ShopState.category.set()

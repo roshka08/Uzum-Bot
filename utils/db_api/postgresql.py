@@ -86,6 +86,31 @@ class Database:
         """
         await self.execute(sql, execute=True)
 
+    async def create_table_order(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS Orders (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        phone_number VARCHAR(20) NOT NULL,
+        lat VARCHAR(30) NOT NULL,
+        lon VARCHAR(30) NOT NULL,
+        total_price NUMERIC NOT NULL,
+        paid BOOLEAN NOT NULL
+        );
+        """
+        await self.execute(sql, execute=True)
+    
+    async def create_table_order_product(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS OrderProduct (
+        id SERIAL PRIMARY KEY,
+        order_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        amount INTEGER NOT NULL
+        );
+        """
+        await self.execute(sql, execute=True)
+
     @staticmethod
     def format_args(sql, parameters: dict):
         sql += " AND ".join(
@@ -105,9 +130,34 @@ class Database:
         sql = "UPDATE Cart SET amount=$1 WHERE user_id=$2 AND product_id=$3;"
         return await self.execute(sql, amount, user_id, product_id, execute=True)
                                   
-    async def select_cart_product(self):
-        sql = "SELECT * FROM Cart"
-        return await self.execute(sql, fetch=True)
+    async def select_cart_product(self, **kwargs):
+        sql = "SELECT * FROM Cart WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetchrow=True)
+    
+    async def select_all_cart_items(self, **kwargs):
+        sql = "SELECT * FROM Cart WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetch=True)
+    
+    async def delete_cart_item(self, product_id, user_id):
+        await self.execute("DELETE FROM Cart WHERE product_id=$1 And user_id=$2", product_id, user_id, execute=True)
+
+    async def clear_cart_item(self, user_id):
+        await self.execute("DELETE FROM Cart WHERE user_id=$1", user_id, execute=True)
+
+    async def add_order(self, user_id, phone_number, lat, lon, total_price, paid=False):
+        sql = "INSERT INTO Orders (user_id, phone_number, lat, lon, total_price, paid) VALUES($1, $2, $3, $4, $5, $6) returning *"
+        return await self.execute(sql, user_id, phone_number, lat, lon, total_price, paid, fetchrow=True)
+    
+    async def select_all_orders(self, **kwargs):
+        sql = "SELECT * FROM Orders WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetch=True)
+    
+    async def add_order_product(self, order_id, product_id, amount):   
+        sql = "INSERT INTO OrderProduct (order_id, product_id, amount) VALUES($1, $2, $3) returning *"
+        return await self.execute(sql, order_id, product_id, amount, fetchrow=True)
     
     async def select_all_users(self):
         sql = "SELECT * FROM Users"

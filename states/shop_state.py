@@ -4,3 +4,7 @@ class ShopState(StatesGroup):
     category = State()
     product = State()
     amount = State()
+    cart = State()
+
+    phone_number = State()
+    location = State()
