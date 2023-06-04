@@ -102,13 +102,12 @@ class Database:
         return await self.execute(sql,user_id, product_id, amount, fetchrow=True)
     
     async def update_product_to_cart(self, user_id, product_id, amount):
-        sql = "UPDATE Cart SET user_id=$1 WHERE product_id=$2 AND amount=$3"
-        return await self.execute(sql, user_id, product_id, amount, execute=True)
+        sql = "UPDATE Cart SET amount=$1 WHERE user_id=$2 AND product_id=$3;"
+        return await self.execute(sql, amount, user_id, product_id, execute=True)
                                   
-    async def select_cart_product(self, **kwargs):
-        sql = "SELECT * FROM Cart WHERE "
-        sql, parameters = self.format_args(sql, parameters=kwargs)
-        return await self.execute(sql, *parameters, fetchrow=True)
+    async def select_cart_product(self):
+        sql = "SELECT * FROM Cart"
+        return await self.execute(sql, fetch=True)
     
     async def select_all_users(self):
         sql = "SELECT * FROM Users"
