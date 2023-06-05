@@ -17,7 +17,7 @@ async def make_order(message: types.Message, state: FSMContext):
         await ShopState.phone_number.set()
     else:
         markup = await get_category_markup()
-        await message.answer("Uzur siz buyurtma qila olmaysiz, oldin savatingizga mahsulot qo'shing", reply_markup=markup)
+        await message.answer("Uzur siz buyurtmani rasmiylashtira olmaysiz, oldin savatingizga mahsulot qo'shing!", reply_markup=markup)
         await ShopState.category.set()
 
 @dp.message_handler(content_types=["contact"], state=ShopState.phone_number)
@@ -45,5 +45,5 @@ async def get_location(message: types.Message, state: FSMContext):
         amount = item["amount"]
         await db.add_order_product(order_id=orders_id, product_id=product_id, amount=amount)
     await db.clear_cart_item(user_id=user['id'])
-    await message.answer("Buyurtmangiz saqlandi tez orada siz bilan bog'lanamiz", reply_markup=main_markup)
+    await message.answer("Buyurtmangiz saqlandi tez orada siz bilan bog'lanamiz!", reply_markup=main_markup)
     await state.finish()
