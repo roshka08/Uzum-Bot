@@ -12,7 +12,6 @@ main_markup.add(KeyboardButton(text="Mahsulotlarimiz 🛍"))
 main_markup.row(cart_button, check_out_button)
 main_markup.add(KeyboardButton(text="Buyurtmalarim 📕"))
 
-
 async def get_category_markup():
     categories = await db.select_all_cats()
     markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)

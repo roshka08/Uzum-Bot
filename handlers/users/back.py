@@ -7,6 +7,8 @@ from aiogram.dispatcher import FSMContext
 @dp.message_handler(text="🏠 Bosh menyu", state="*")
 @dp.message_handler(text="⬅️ Orqaga", state=ShopState.category)
 @dp.message_handler(text="⬅️ Orqaga", state=ShopState.cart)
+@dp.message_handler(text="⬅️ Orqaga", state=ShopState.phone_number)
+@dp.message_handler(text="⬅️ Orqaga", state=ShopState.location)
 async def main_menu_redirect(message: types.Message, state: FSMContext):
     await message.answer("Siz bosh menyuga qaytingiz. Kerakli bo'limni tanlang!", reply_markup=main_markup)
     await state.finish()
