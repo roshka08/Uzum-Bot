@@ -199,6 +199,15 @@ class Database:
         sql = "UPDATE Users SET username=$1 WHERE telegram_id=$2"
         return await self.execute(sql, username, telegram_id, execute=True)
 
+    async def update_order_paid(self, order_id, paid=True):
+        sql = "UPDATE Orders SET paid=$2 WHERE id=$1"
+        return await self.execute(sql, order_id, paid, execute=True)
+
+    async def select_order_product(self, **kwargs):
+        sql = "SELECT * FROM OrderProduct WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetch=True)
+
     async def delete_users(self):
         await self.execute("DELETE FROM Users WHERE TRUE", execute=True)
 
