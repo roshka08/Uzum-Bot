@@ -40,7 +40,7 @@ async def delete_cart_item(message: types.Message):
     await db.delete_cart_item(product_id=product["id"], user_id=user["id"])
     cart_items = await db.select_all_cart_items(user_id=user["id"])
     if cart_items:
-        msg, markup = await get_cart_info(cart_items=cart_items)
+        msg, markup, total_price= await get_cart_info(cart_items=cart_items)
         await message.answer("«❌ Mahsulot nomi» - savatdan o'chirish\n«🔄 Tozalash» - savatni butunlay bo'shatish")
         await message.answer(msg, reply_markup=markup)
         await ShopState.cart.set()

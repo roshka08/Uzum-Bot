@@ -24,7 +24,7 @@ async def send_invoice(products):
     invoice = InVoice(
         title="To'lov qilish uchun quyidagi tugmani bosing!",
         description=description, 
-        currency="USD",
+        currency="UZS",
         prices=total_prices,
         start_parameter="create_invoice",
         need_email=True,
