@@ -15,9 +15,9 @@ async def get_cart_info(cart_items):
         price = item['amount'] * product['price']
         total_price += price
         products.append(product['title'])
-        msg += f"<b>{product['title']}</b>\n{item['amount']} x {product['price']} = {price}$\n"
+        msg += f"<b>{product['title']}</b>\n{item['amount']} x {product['price']} = {price} so'm\n"
     markup = await cart_items_markup(products=products)
-    msg += f"\n<b>Umumiy: </b> {total_price}$"
+    msg += f"\n<b>Umumiy: </b> {total_price} so'm"
     return msg, markup, total_price
 
 @dp.message_handler(text="Savatcha 🛒", state="*")

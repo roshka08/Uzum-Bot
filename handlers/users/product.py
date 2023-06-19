@@ -10,6 +10,6 @@ async def send_product(message: types.Message, state: FSMContext):
     await state.update_data(data={"cat_id": product['cat_id'], "product_id": product['id']})
     markup = await numbers_markup()
     image = product['image']
-    caption = f"<b>{product['title']} - {product['price']}$</b> \n\n<i>{product['description']}</i>"
+    caption = f"<b>{product['title']} - {product['price']} so'm</b> \n\n<i>{product['description']}</i>"
     await message.answer_photo(photo=image, caption=caption, reply_markup=markup)
     await ShopState.next()
